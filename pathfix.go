@@ -1,7 +1,9 @@
 package pathfix
 
 import (
+	"bytes"
 	"errors"
+	"fmt"
 	"os"
 	"os/exec"
 	"runtime"
@@ -20,14 +22,24 @@ func Fix() error {
 		return errors.New("Failed to retrieve default shell: No SHELL environment variable found")
 	}
 
-	envCommand := exec.Command(defaultShell, "-ilc", "env")
+	buf := &bytes.Buffer{}
+	envCommand := exec.Command(defaultShell, "-lc", "env")
+	envCommand.Stdout = buf
 
-	allEnvVars, err := envCommand.Output()
+	err := envCommand.Start()
 	if err != nil {
-		return errors.New("Failed to run shell for retrieving environment variables")
+		return fmt.Errorf("Error starting shell: %v", err)
 	}
 
-	for _, envVar := range strings.Split(string(allEnvVars), "\n") {
+	// Without explicitly calling Wait, tests hang forever
+	// https://github.com/golang/go/issues/24050
+	err = envCommand.Wait()
+
+	if err != nil {
+		return fmt.Errorf("Failed to run shell for retrieving environment variables: %v", err)
+	}
+
+	for _, envVar := range strings.Split(buf.String(), "\n") {
 		if strings.HasPrefix(envVar, "PATH=") {
 			split := strings.Split(envVar, "=")
 

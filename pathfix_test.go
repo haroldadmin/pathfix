@@ -9,10 +9,19 @@ import (
 	"github.com/haroldadmin/pathfix"
 )
 
+func BenchmarkPathFix(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		pathfix.Fix()
+	}
+}
+
 func TestPathFix(t *testing.T) {
 
 	ogPath := os.Getenv("PATH")
 	ogShell := os.Getenv("SHELL")
+	if ogShell == "" {
+		ogShell = "/bin/bash"
+	}
 
 	t.Run("should fix current process's PATH", func(t *testing.T) {
 		defer resetEnv(t, ogPath, ogShell)
@@ -86,7 +95,7 @@ func TestPathFix(t *testing.T) {
 	t.Run("should append to the old PATH if it is not empty", func(t *testing.T) {
 		defer resetEnv(t, ogPath, ogShell)
 
-		currentPath := "/bin/blahblahyadayada"
+		currentPath := runtime.GOROOT()
 		os.Setenv("PATH", currentPath)
 
 		if err := pathfix.Fix(); err != nil {
