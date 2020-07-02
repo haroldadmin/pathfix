@@ -19,8 +19,11 @@ func TestPathFix(t *testing.T) {
 
 	ogPath := os.Getenv("PATH")
 	ogShell := os.Getenv("SHELL")
+
+	// Workaround for missing shell on github workflow runners
 	if ogShell == "" {
 		ogShell = "/bin/bash"
+		os.Setenv("SHELL", ogShell)
 	}
 
 	t.Run("should fix current process's PATH", func(t *testing.T) {
