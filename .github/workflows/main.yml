@@ -1,0 +1,15 @@
+name: Build and test Go
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Build
+    runs-on: [windows-latest, ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.13'
+      - name: Test
+        run: go test -v ./...
