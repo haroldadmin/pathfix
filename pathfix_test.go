@@ -27,6 +27,10 @@ func TestPathFix(t *testing.T) {
 	}
 
 	t.Run("should fix current process's PATH", func(t *testing.T) {
+		if runtime.GOOS == "windows" {
+			t.Skip("Test not applicable to Windows")
+		}
+
 		defer resetEnv(t, ogPath, ogShell)
 
 		t.Logf("Current PATH: %s\n\n", os.Getenv("PATH"))
@@ -48,6 +52,10 @@ func TestPathFix(t *testing.T) {
 	})
 
 	t.Run("should return an error if SHELL env var is not set", func(t *testing.T) {
+		if runtime.GOOS == "windows" {
+			t.Skip("Test not applicable to Windows")
+		}
+
 		defer resetEnv(t, ogPath, ogShell)
 
 		os.Unsetenv("SHELL")
@@ -63,11 +71,11 @@ func TestPathFix(t *testing.T) {
 	})
 
 	t.Run("should not attempt to fix PATH if running on windows", func(t *testing.T) {
-		defer resetEnv(t, ogPath, ogShell)
-
 		if runtime.GOOS != "windows" {
 			t.Skipf("Not running on windows, this test is not applicable")
 		}
+
+		defer resetEnv(t, ogPath, ogShell)
 
 		os.Unsetenv("PATH")
 		if path := os.Getenv("PATH"); path != "" {
@@ -85,6 +93,10 @@ func TestPathFix(t *testing.T) {
 	})
 
 	t.Run("should return an error if shell process fails", func(t *testing.T) {
+		if runtime.GOOS == "windows" {
+			t.Skip("Test not applicable to Windows")
+		}
+
 		defer resetEnv(t, ogPath, ogShell)
 
 		// Supply an invalid value for SHELL executable so that invoking it fails
@@ -96,6 +108,10 @@ func TestPathFix(t *testing.T) {
 	})
 
 	t.Run("should append to the old PATH if it is not empty", func(t *testing.T) {
+		if runtime.GOOS == "windows" {
+			t.Skip("Test not applicable to Windows")
+		}
+
 		defer resetEnv(t, ogPath, ogShell)
 
 		currentPath := "~/blah" + string(os.PathListSeparator) + os.Getenv("PATH")
