@@ -23,7 +23,7 @@ func Fix() error {
 	}
 
 	buf := &bytes.Buffer{}
-	envCommand := exec.Command(defaultShell, "-lc", "env")
+	envCommand := exec.Command(defaultShell, "-ilc", "env")
 	envCommand.Stdout = buf
 
 	err := envCommand.Start()
