@@ -114,7 +114,7 @@ func TestPathFix(t *testing.T) {
 
 		defer resetEnv(t, ogPath, ogShell)
 
-		currentPath := "~/blah" + string(os.PathListSeparator) + os.Getenv("PATH")
+		currentPath := "~/blah"
 		t.Logf("Starting with PATH:\n%s\n\n", currentPath)
 
 		os.Setenv("PATH", currentPath)
