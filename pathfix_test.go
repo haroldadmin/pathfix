@@ -114,7 +114,7 @@ func TestPathFix(t *testing.T) {
 
 		defer resetEnv(t, ogPath, ogShell)
 
-		currentPath := "~/blah"
+		currentPath := "~/blah" + string(os.PathListSeparator) + os.Getenv("PATH")
 		t.Logf("Starting with PATH:\n%s\n\n", currentPath)
 
 		os.Setenv("PATH", currentPath)
@@ -125,7 +125,7 @@ func TestPathFix(t *testing.T) {
 
 		path := os.Getenv("PATH")
 
-		if !strings.HasPrefix(path, "~/blah") {
+		if !strings.HasPrefix(path, currentPath) {
 			t.Error("New PATH was not appended to old path: Could not find old PATH at the start")
 		}
 	})
